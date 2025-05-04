@@ -2,6 +2,7 @@ import { React } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Box, CircularProgress } from '@mui/material'
 import { useAuth } from './hooks/useAuth'
+import { NotificationsProvider } from './context/NotificationsContext'
 
 // Pages
 import HomePage from './pages/HomePage'
@@ -12,6 +13,7 @@ import ActivitiesPage from './pages/ActivitiesPage'
 import AddActivityPage from './pages/AddActivityPage'
 import EditActivityPage from './pages/EditActivityPage'
 import ProfilePage from './pages/ProfilePage'
+import NotificationsPage from './pages/NotificationsPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import ExplorePage from './pages/ExplorePage'
@@ -61,14 +63,15 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 
 function App() {
   return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/explore" element={<ExplorePage />} />
+    <NotificationsProvider>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/explore" element={<ExplorePage />} />
 
       {/* Protected routes - Admin only */}
       <Route
@@ -114,9 +117,20 @@ function App() {
         }
       />
 
+      {/* Notifications route */}
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute adminOnly>
+            <NotificationsPage />
+          </ProtectedRoute>
+        }
+      />
+
       {/* 404 route */}
       <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+      </Routes>
+    </NotificationsProvider>
   )
 }
 

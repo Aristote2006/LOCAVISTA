@@ -40,6 +40,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import { useNotifications } from '../../context/NotificationsContext';
 import { useState, useEffect } from 'react';
 
 const drawerWidth = 240;
@@ -47,6 +48,7 @@ const drawerWidth = 240;
 const Sidebar = ({ open, onClose }) => {
   const { user, logout } = useAuth();
   const { mode, toggleColorMode } = useThemeMode();
+  const { getUnreadCount } = useNotifications();
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -138,6 +140,7 @@ const Sidebar = ({ open, onClose }) => {
       text: 'Notifications',
       icon: <NotificationsIcon />,
       path: '/notifications',
+      badge: getUnreadCount() > 0 ? getUnreadCount() : null,
     },
   ];
 
@@ -255,6 +258,7 @@ const Sidebar = ({ open, onClose }) => {
           <Tooltip title="Notifications">
             <IconButton
               size="small"
+              onClick={() => handleNavigation('/notifications')}
               sx={{
                 backgroundColor: alpha(theme.palette.primary.main, 0.1),
                 '&:hover': {
@@ -262,7 +266,12 @@ const Sidebar = ({ open, onClose }) => {
                 }
               }}
             >
-              <Badge color="error" variant="dot">
+              <Badge
+                badgeContent={getUnreadCount() > 0 ? getUnreadCount() : null}
+                color="error"
+                variant={getUnreadCount() > 0 ? "standard" : "dot"}
+                invisible={getUnreadCount() === 0}
+              >
                 <NotificationsIcon fontSize="small" />
               </Badge>
             </IconButton>
@@ -433,7 +442,17 @@ const Sidebar = ({ open, onClose }) => {
                         minWidth: 40,
                       }}
                     >
-                      {item.icon}
+                      {item.badge ? (
+                        <Badge
+                          badgeContent={item.badge}
+                          color="error"
+                          sx={{ '& .MuiBadge-badge': { fontSize: '0.65rem' } }}
+                        >
+                          {item.icon}
+                        </Badge>
+                      ) : (
+                        item.icon
+                      )}
                     </ListItemIcon>
                     <ListItemText
                       primary={item.text}

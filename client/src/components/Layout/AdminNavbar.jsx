@@ -44,9 +44,12 @@ import {
   Home as HomeIcon,
   ArrowDropDown as ArrowDropDownIcon,
   Close as CloseIcon,
+  CheckCircle as CheckCircleIcon,
+  NotificationsActive as NotificationsActiveIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import { useNotifications } from '../../context/NotificationsContext';
 
 const AdminNavbar = ({ toggleSidebar }) => {
   const theme = useTheme();
@@ -55,18 +58,12 @@ const AdminNavbar = ({ toggleSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { notifications, markAsRead, getUnreadCount } = useNotifications();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
   const [quickActionsAnchorEl, setQuickActionsAnchorEl] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
-
-  // Mock notifications
-  const notifications = [
-    { id: 1, title: 'New User Registration', message: 'John Doe just registered', time: '5 minutes ago', read: false },
-    { id: 2, title: 'New Activity Added', message: 'Central Park Museum was added', time: '1 hour ago', read: false },
-    { id: 3, title: 'System Update', message: 'System will be updated tonight', time: '3 hours ago', read: true },
-  ];
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -82,6 +79,16 @@ const AdminNavbar = ({ toggleSidebar }) => {
 
   const handleNotificationsClose = () => {
     setNotificationsAnchorEl(null);
+  };
+
+  const handleViewAllNotifications = () => {
+    handleNotificationsClose();
+    navigate('/notifications');
+  };
+
+  const handleNotificationClick = (event, notificationId) => {
+    event.stopPropagation();
+    markAsRead(notificationId);
   };
 
   const handleQuickActionsOpen = (event) => {
@@ -388,11 +395,15 @@ const AdminNavbar = ({ toggleSidebar }) => {
               sx={{ ml: { xs: 0.5, sm: 1 } }}
             >
               <Badge
-                badgeContent={notifications.filter(n => !n.read).length}
+                badgeContent={getUnreadCount()}
                 color="error"
                 sx={{ '& .MuiBadge-badge': { fontSize: isMobile ? '0.6rem' : '0.75rem' } }}
               >
-                <NotificationsIcon fontSize={isMobile ? "small" : "medium"} />
+                {getUnreadCount() > 0 ? (
+                  <NotificationsActiveIcon fontSize={isMobile ? "small" : "medium"} />
+                ) : (
+                  <NotificationsIcon fontSize={isMobile ? "small" : "medium"} />
+                )}
               </Badge>
             </IconButton>
           </Tooltip>
@@ -432,16 +443,18 @@ const AdminNavbar = ({ toggleSidebar }) => {
               <Typography variant="subtitle1" fontWeight={600}>
                 Notifications
               </Typography>
-              <Chip
-                label={`${notifications.filter(n => !n.read).length} new`}
-                size="small"
-                color="error"
-                sx={{ height: 20 }}
-              />
+              {getUnreadCount() > 0 && (
+                <Chip
+                  label={`${getUnreadCount()} new`}
+                  size="small"
+                  color="error"
+                  sx={{ height: 20 }}
+                />
+              )}
             </Box>
             <List sx={{ p: 0 }}>
               {notifications.length > 0 ? (
-                notifications.map((notification) => (
+                notifications.slice(0, 5).map((notification) => (
                   <ListItem
                     key={notification.id}
                     disablePadding
@@ -451,10 +464,13 @@ const AdminNavbar = ({ toggleSidebar }) => {
                         : alpha(theme.palette.primary.main, 0.05),
                     }}
                   >
-                    <ListItemButton sx={{ px: 2, py: 1.5 }}>
+                    <ListItemButton
+                      sx={{ px: 2, py: 1.5 }}
+                      onClick={(e) => handleNotificationClick(e, notification.id)}
+                    >
                       <Box sx={{ width: '100%' }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                          <Typography variant="subtitle2" fontWeight={600}>
+                          <Typography variant="subtitle2" fontWeight={notification.read ? 500 : 600}>
                             {notification.title}
                           </Typography>
                           {!notification.read && (
@@ -495,7 +511,8 @@ const AdminNavbar = ({ toggleSidebar }) => {
                 size="small"
                 color="primary"
                 sx={{ borderRadius: 2, textTransform: 'none' }}
-                onClick={handleNotificationsClose}
+                onClick={handleViewAllNotifications}
+                startIcon={<NotificationsIcon fontSize="small" />}
               >
                 View all notifications
               </Button>
