@@ -17,6 +17,9 @@ import {
   alpha,
   Badge,
   Collapse,
+  SwipeableDrawer,
+  useMediaQuery,
+  Backdrop,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -37,7 +40,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const drawerWidth = 240;
 
@@ -47,11 +50,25 @@ const Sidebar = ({ open, onClose }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // State for expandable menu sections
   const [activitiesOpen, setActivitiesOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+
+  // Auto-expand the section that contains the current path
+  useEffect(() => {
+    const currentPath = location.pathname;
+
+    // Check if current path is in activities
+    const isInActivities = activityItems.some(item => item.path === currentPath);
+    if (isInActivities) setActivitiesOpen(true);
+
+    // Check if current path is in settings
+    const isInSettings = settingsItems.some(item => item.path === currentPath);
+    if (isInSettings) setSettingsOpen(true);
+  }, [location.pathname]);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -124,21 +141,8 @@ const Sidebar = ({ open, onClose }) => {
     },
   ];
 
-  return (
-    <Drawer
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: drawerWidth,
-          boxSizing: 'border-box',
-          borderRight: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-        },
-      }}
-      variant="persistent"
-      anchor="left"
-      open={open}
-    >
+  // Drawer content
+  const drawerContent = () => (
       {/* Header with logo and close button */}
       <Box
         sx={{
@@ -557,7 +561,65 @@ const Sidebar = ({ open, onClose }) => {
           />
         </Box>
       </Box>
-    </Drawer>
+  );
+
+  return (
+    <>
+      {/* Backdrop for mobile */}
+      {isMobile && open && (
+        <Backdrop
+          sx={{
+            color: '#fff',
+            zIndex: (theme) => theme.zIndex.drawer - 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          }}
+          open={open}
+          onClick={onClose}
+        />
+      )}
+
+      {isMobile ? (
+        // Mobile drawer (swipeable)
+        <SwipeableDrawer
+          anchor="left"
+          open={open}
+          onClose={onClose}
+          onOpen={() => {}}
+          disableBackdropTransition={!mode === 'dark'}
+          disableDiscovery={mode === 'dark'}
+          swipeAreaWidth={30}
+          hysteresis={0.3}
+          sx={{
+            '& .MuiDrawer-paper': {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+              borderRight: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+              boxShadow: '0 0 20px rgba(0,0,0,0.15)',
+            },
+          }}
+        >
+          {drawerContent()}
+        </SwipeableDrawer>
+      ) : (
+        // Desktop drawer (persistent)
+        <Drawer
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+              borderRight: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+            },
+          }}
+          variant="persistent"
+          anchor="left"
+          open={open}
+        >
+          {drawerContent()}
+        </Drawer>
+      )}
+    </>
   );
 };
 

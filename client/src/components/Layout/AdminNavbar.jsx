@@ -24,6 +24,7 @@ import {
   List,
   ListItem,
   ListItemButton,
+  useMediaQuery,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -53,12 +54,13 @@ const AdminNavbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
   const [quickActionsAnchorEl, setQuickActionsAnchorEl] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
-  
+
   // Mock notifications
   const notifications = [
     { id: 1, title: 'New User Registration', message: 'John Doe just registered', time: '5 minutes ago', read: false },
@@ -81,7 +83,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
   const handleNotificationsClose = () => {
     setNotificationsAnchorEl(null);
   };
-  
+
   const handleQuickActionsOpen = (event) => {
     setQuickActionsAnchorEl(event.currentTarget);
   };
@@ -100,7 +102,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
     handleClose();
     navigate('/profile');
   };
-  
+
   const toggleSearch = () => {
     setSearchOpen(!searchOpen);
   };
@@ -110,18 +112,22 @@ const AdminNavbar = ({ toggleSidebar }) => {
       position="sticky"
       elevation={0}
       sx={{
-        backgroundColor: theme.palette.mode === 'dark' 
-          ? alpha(theme.palette.background.paper, 0.9) 
+        backgroundColor: theme.palette.mode === 'dark'
+          ? alpha(theme.palette.background.paper, 0.9)
           : alpha(theme.palette.background.paper, 0.9),
         color: theme.palette.text.primary,
         backdropFilter: 'blur(8px)',
         borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-        backgroundImage: theme.palette.mode === 'dark' 
-          ? 'linear-gradient(rgba(26, 26, 26, 0.8), rgba(26, 26, 26, 0.8)), url("https://www.transparenttextures.com/patterns/cubes.png")' 
+        backgroundImage: theme.palette.mode === 'dark'
+          ? 'linear-gradient(rgba(26, 26, 26, 0.8), rgba(26, 26, 26, 0.8)), url("https://www.transparenttextures.com/patterns/cubes.png")'
           : 'linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url("https://www.transparenttextures.com/patterns/cubes.png")',
       }}
     >
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
+      <Toolbar sx={{
+        justifyContent: 'space-between',
+        minHeight: { xs: 56, sm: 64 },
+        px: { xs: 1, sm: 2 }
+      }}>
         {/* Left section */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
@@ -191,12 +197,12 @@ const AdminNavbar = ({ toggleSidebar }) => {
                 Dashboard
               </Box>
             </Typography>
-            
+
             <Chip
               label={`v1.0`}
               size="small"
-              sx={{ 
-                height: 20, 
+              sx={{
+                height: 20,
                 fontSize: '0.625rem',
                 backgroundColor: alpha(theme.palette.primary.main, 0.1),
                 color: theme.palette.primary.main,
@@ -204,7 +210,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
               }}
             />
           </Box>
-          
+
           {/* Quick navigation buttons */}
           <Box sx={{ ml: 3, display: { xs: 'none', md: 'flex' }, gap: 1 }}>
             <Button
@@ -225,7 +231,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
             >
               View Site
             </Button>
-            
+
             <Button
               component={RouterLink}
               to="/activities/add"
@@ -248,8 +254,8 @@ const AdminNavbar = ({ toggleSidebar }) => {
         </Box>
 
         {/* Center section - Search */}
-        <Box 
-          sx={{ 
+        <Box
+          sx={{
             display: { xs: searchOpen ? 'flex' : 'none', md: 'flex' },
             position: { xs: 'absolute', md: 'static' },
             left: searchOpen ? 0 : 'auto',
@@ -263,14 +269,14 @@ const AdminNavbar = ({ toggleSidebar }) => {
           }}
         >
           {searchOpen && (
-            <IconButton 
+            <IconButton
               onClick={toggleSearch}
               sx={{ mr: 1 }}
             >
               <CloseIcon />
             </IconButton>
           )}
-          
+
           <Paper
             component="form"
             sx={{
@@ -304,15 +310,16 @@ const AdminNavbar = ({ toggleSidebar }) => {
           >
             <SearchIcon />
           </IconButton>
-          
+
           {/* Quick Actions */}
           <Tooltip title="Quick Actions">
             <IconButton
               color="inherit"
               onClick={handleQuickActionsOpen}
-              sx={{ ml: 1 }}
+              size={isMobile ? "small" : "medium"}
+              sx={{ ml: { xs: 0.5, sm: 1 } }}
             >
-              <MoreVertIcon />
+              <MoreVertIcon fontSize={isMobile ? "small" : "medium"} />
             </IconButton>
           </Tooltip>
           <Menu
@@ -324,7 +331,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
                 elevation: 3,
                 sx: {
                   mt: 1.5,
-                  width: 200,
+                  width: { xs: 180, sm: 200 },
                   borderRadius: 2,
                   overflow: 'visible',
                   filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.15))',
@@ -339,7 +346,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
               <ListItemIcon>
                 <AddIcon fontSize="small" color="primary" />
               </ListItemIcon>
-              <ListItemText>Add Activity</ListItemText>
+              <ListItemText primary="Add Activity" primaryTypographyProps={{ fontSize: isMobile ? '0.875rem' : '1rem' }} />
             </MenuItem>
             <MenuItem onClick={() => {
               handleQuickActionsClose();
@@ -348,7 +355,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
               <ListItemIcon>
                 <LocationIcon fontSize="small" color="primary" />
               </ListItemIcon>
-              <ListItemText>Manage Activities</ListItemText>
+              <ListItemText primary="Manage Activities" primaryTypographyProps={{ fontSize: isMobile ? '0.875rem' : '1rem' }} />
             </MenuItem>
             <MenuItem onClick={() => {
               handleQuickActionsClose();
@@ -357,7 +364,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
               <ListItemIcon>
                 <SettingsIcon fontSize="small" color="primary" />
               </ListItemIcon>
-              <ListItemText>Settings</ListItemText>
+              <ListItemText primary="Settings" primaryTypographyProps={{ fontSize: isMobile ? '0.875rem' : '1rem' }} />
             </MenuItem>
             <Divider />
             <MenuItem onClick={toggleColorMode}>
@@ -368,7 +375,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
                   <DarkModeIcon fontSize="small" color="primary" />
                 )}
               </ListItemIcon>
-              <ListItemText>{mode === 'dark' ? 'Light Mode' : 'Dark Mode'}</ListItemText>
+              <ListItemText primary={mode === 'dark' ? 'Light Mode' : 'Dark Mode'} primaryTypographyProps={{ fontSize: isMobile ? '0.875rem' : '1rem' }} />
             </MenuItem>
           </Menu>
 
@@ -377,13 +384,15 @@ const AdminNavbar = ({ toggleSidebar }) => {
             <IconButton
               color="inherit"
               onClick={handleNotificationsOpen}
-              sx={{ ml: 1 }}
+              size={isMobile ? "small" : "medium"}
+              sx={{ ml: { xs: 0.5, sm: 1 } }}
             >
-              <Badge 
-                badgeContent={notifications.filter(n => !n.read).length} 
+              <Badge
+                badgeContent={notifications.filter(n => !n.read).length}
                 color="error"
+                sx={{ '& .MuiBadge-badge': { fontSize: isMobile ? '0.6rem' : '0.75rem' } }}
               >
-                <NotificationsIcon />
+                <NotificationsIcon fontSize={isMobile ? "small" : "medium"} />
               </Badge>
             </IconButton>
           </Tooltip>
@@ -403,8 +412,8 @@ const AdminNavbar = ({ toggleSidebar }) => {
               paper: {
                 elevation: 3,
                 sx: {
-                  width: 320,
-                  maxHeight: 400,
+                  width: { xs: 280, sm: 320 },
+                  maxHeight: { xs: 350, sm: 400 },
                   mt: 1.5,
                   borderRadius: 2,
                   overflow: 'hidden',
@@ -412,9 +421,9 @@ const AdminNavbar = ({ toggleSidebar }) => {
               }
             }}
           >
-            <Box sx={{ 
-              p: 2, 
-              backgroundColor: theme.palette.primary.main, 
+            <Box sx={{
+              p: 2,
+              backgroundColor: theme.palette.primary.main,
               color: 'white',
               display: 'flex',
               justifyContent: 'space-between',
@@ -423,22 +432,22 @@ const AdminNavbar = ({ toggleSidebar }) => {
               <Typography variant="subtitle1" fontWeight={600}>
                 Notifications
               </Typography>
-              <Chip 
-                label={`${notifications.filter(n => !n.read).length} new`} 
-                size="small" 
-                color="error" 
+              <Chip
+                label={`${notifications.filter(n => !n.read).length} new`}
+                size="small"
+                color="error"
                 sx={{ height: 20 }}
               />
             </Box>
             <List sx={{ p: 0 }}>
               {notifications.length > 0 ? (
                 notifications.map((notification) => (
-                  <ListItem 
-                    key={notification.id} 
+                  <ListItem
+                    key={notification.id}
                     disablePadding
-                    sx={{ 
-                      backgroundColor: notification.read 
-                        ? 'transparent' 
+                    sx={{
+                      backgroundColor: notification.read
+                        ? 'transparent'
                         : alpha(theme.palette.primary.main, 0.05),
                     }}
                   >
@@ -471,9 +480,9 @@ const AdminNavbar = ({ toggleSidebar }) => {
                 ))
               ) : (
                 <ListItem sx={{ py: 4, textAlign: 'center' }}>
-                  <ListItemText 
-                    primary="No notifications" 
-                    secondary="You're all caught up!" 
+                  <ListItemText
+                    primary="No notifications"
+                    secondary="You're all caught up!"
                     primaryTypographyProps={{ align: 'center' }}
                     secondaryTypographyProps={{ align: 'center' }}
                   />
@@ -498,6 +507,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
             <Button
               onClick={handleMenu}
               color="inherit"
+              size={isMobile ? "small" : "medium"}
               sx={{
                 borderRadius: '8px',
                 textTransform: 'none',
@@ -506,15 +516,17 @@ const AdminNavbar = ({ toggleSidebar }) => {
                 backgroundColor: alpha(theme.palette.primary.main, 0.05),
                 '&:hover': {
                   backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                }
+                },
+                px: { xs: 1, sm: 2 },
+                py: { xs: 0.5, sm: 1 }
               }}
             >
               <Avatar
                 alt={user?.name || 'Admin'}
                 src={user?.profileImage}
-                sx={{ 
-                  width: 32, 
-                  height: 32, 
+                sx={{
+                  width: { xs: 28, sm: 32 },
+                  height: { xs: 28, sm: 32 },
                   mr: { xs: 0, sm: 1 },
                   border: `2px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                 }}
@@ -527,7 +539,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
                   {user?.role === 'admin' ? 'Administrator' : 'User'}
                 </Typography>
               </Box>
-              <ArrowDropDownIcon sx={{ ml: { xs: 0, sm: 0.5 } }} />
+              <ArrowDropDownIcon sx={{ ml: { xs: 0, sm: 0.5 }, fontSize: { xs: 20, sm: 24 } }} />
             </Button>
             <Menu
               id="menu-appbar"
@@ -550,6 +562,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
                     mt: 1.5,
                     overflow: 'visible',
                     borderRadius: 2,
+                    width: { xs: 200, sm: 220 },
                     filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.15))',
                     '&:before': {
                       content: '""',
@@ -568,44 +581,50 @@ const AdminNavbar = ({ toggleSidebar }) => {
               }}
             >
               <Box sx={{ px: 2, py: 1.5 }}>
-                <Typography variant="subtitle1" fontWeight={600} noWrap>
+                <Typography variant="subtitle1" fontWeight={600} noWrap fontSize={isMobile ? '0.9rem' : '1rem'}>
                   {user?.name || 'Admin User'}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" noWrap>
+                <Typography variant="body2" color="text.secondary" noWrap fontSize={isMobile ? '0.75rem' : '0.875rem'}>
                   {user?.email || 'admin@example.com'}
                 </Typography>
               </Box>
               <Divider />
-              <MenuItem onClick={handleProfile}>
+              <MenuItem onClick={handleProfile} dense={isMobile}>
                 <ListItemIcon>
                   <PersonIcon fontSize="small" color="primary" />
                 </ListItemIcon>
-                <ListItemText>Profile</ListItemText>
+                <ListItemText primary="Profile" primaryTypographyProps={{ fontSize: isMobile ? '0.875rem' : '1rem' }} />
               </MenuItem>
               <MenuItem onClick={() => {
                 handleClose();
                 navigate('/dashboard');
-              }}>
+              }} dense={isMobile}>
                 <ListItemIcon>
                   <DashboardIcon fontSize="small" color="primary" />
                 </ListItemIcon>
-                <ListItemText>Dashboard</ListItemText>
+                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontSize: isMobile ? '0.875rem' : '1rem' }} />
               </MenuItem>
               <MenuItem onClick={() => {
                 handleClose();
                 navigate('/profile');
-              }}>
+              }} dense={isMobile}>
                 <ListItemIcon>
                   <SettingsIcon fontSize="small" color="primary" />
                 </ListItemIcon>
-                <ListItemText>Settings</ListItemText>
+                <ListItemText primary="Settings" primaryTypographyProps={{ fontSize: isMobile ? '0.875rem' : '1rem' }} />
               </MenuItem>
               <Divider />
-              <MenuItem onClick={handleLogout}>
+              <MenuItem onClick={handleLogout} dense={isMobile}>
                 <ListItemIcon>
                   <LogoutIcon fontSize="small" color="error" />
                 </ListItemIcon>
-                <ListItemText sx={{ color: theme.palette.error.main }}>Logout</ListItemText>
+                <ListItemText
+                  primary="Logout"
+                  primaryTypographyProps={{
+                    fontSize: isMobile ? '0.875rem' : '1rem',
+                    color: theme.palette.error.main
+                  }}
+                />
               </MenuItem>
             </Menu>
           </Box>

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { 
-  Box, 
-  useMediaQuery, 
-  useTheme, 
-  Fade, 
-  Backdrop, 
+import {
+  Box,
+  useMediaQuery,
+  useTheme,
+  Fade,
+  Backdrop,
   CircularProgress,
   Paper,
   Grid,
@@ -17,7 +17,7 @@ import {
   Badge,
   Avatar,
 } from '@mui/material';
-import { 
+import {
   Notifications as NotificationsIcon,
   Settings as SettingsIcon,
   Help as HelpIcon,
@@ -39,6 +39,8 @@ import Sidebar from './Sidebar';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { useNavigate } from 'react-router-dom';
+
+const drawerWidth = 240;
 
 const AdminLayout = ({ children, loading = false }) => {
   const theme = useTheme();
@@ -114,17 +116,17 @@ const AdminLayout = ({ children, loading = false }) => {
       </Backdrop>
 
       {/* Main layout */}
-      <Box sx={{ display: 'flex', flexGrow: 1 }}>
+      <Box sx={{ display: 'flex', flexGrow: 1, position: 'relative' }}>
         <Sidebar open={sidebarOpen} onClose={toggleSidebar} />
-        
+
         <Box
           component="main"
           sx={{
             flexGrow: 1,
             display: 'flex',
             flexDirection: 'column',
-            width: { xs: '100%', md: `calc(100% - ${sidebarOpen ? 240 : 0}px)` },
-            ml: { xs: 0, md: sidebarOpen ? '240px' : 0 },
+            width: { xs: '100%', md: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
+            ml: { xs: 0, md: sidebarOpen ? `${drawerWidth}px` : 0 },
             transition: theme.transitions.create(['margin', 'width'], {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,
@@ -151,18 +153,18 @@ const AdminLayout = ({ children, loading = false }) => {
           <Paper
             elevation={3}
             sx={{
-              p: 2,
+              p: { xs: 1, sm: 2 },
               borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
               backgroundColor: theme.palette.background.paper,
-              backgroundImage: theme.palette.mode === 'dark' 
-                ? 'linear-gradient(rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.9)), url("https://www.transparenttextures.com/patterns/cubes.png")' 
+              backgroundImage: theme.palette.mode === 'dark'
+                ? 'linear-gradient(rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.9)), url("https://www.transparenttextures.com/patterns/cubes.png")'
                 : 'linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url("https://www.transparenttextures.com/patterns/cubes.png")',
               zIndex: 10,
             }}
           >
-            <Grid container spacing={2} alignItems="center">
-              {/* Date and Time */}
-              <Grid item xs={12} sm={4} md={3}>
+            <Grid container spacing={{ xs: 1, sm: 2 }} alignItems="center">
+              {/* Date and Time - Hidden on extra small screens */}
+              <Grid item xs={12} sm={4} md={3} sx={{ display: { xs: 'none', sm: 'block' } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Box sx={{ mr: 2 }}>
                     <CalendarIcon color="primary" />
@@ -181,18 +183,25 @@ const AdminLayout = ({ children, loading = false }) => {
 
               {/* Quick Actions */}
               <Grid item xs={12} sm={8} md={6}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: { xs: 'center', sm: 'center' },
+                  gap: { xs: 0.5, sm: 1 },
+                  flexWrap: { xs: 'wrap', sm: 'nowrap' }
+                }}>
                   <Tooltip title="Refresh Dashboard">
-                    <IconButton 
+                    <IconButton
                       onClick={handleRefresh}
-                      sx={{ 
+                      size={isMobile ? "small" : "medium"}
+                      sx={{
                         backgroundColor: alpha(theme.palette.primary.main, 0.1),
                         '&:hover': {
                           backgroundColor: alpha(theme.palette.primary.main, 0.2),
                         }
                       }}
                     >
-                      <RefreshIcon 
+                      <RefreshIcon
+                        fontSize={isMobile ? "small" : "medium"}
                         sx={{
                           animation: refreshing ? 'spin 1s linear infinite' : 'none',
                           '@keyframes spin': {
@@ -207,23 +216,25 @@ const AdminLayout = ({ children, loading = false }) => {
                       />
                     </IconButton>
                   </Tooltip>
-                  
+
                   <Tooltip title="Search">
-                    <IconButton 
-                      sx={{ 
+                    <IconButton
+                      size={isMobile ? "small" : "medium"}
+                      sx={{
                         backgroundColor: alpha(theme.palette.primary.main, 0.1),
                         '&:hover': {
                           backgroundColor: alpha(theme.palette.primary.main, 0.2),
                         }
                       }}
                     >
-                      <SearchIcon />
+                      <SearchIcon fontSize={isMobile ? "small" : "medium"} />
                     </IconButton>
                   </Tooltip>
-                  
+
                   <Tooltip title="Notifications">
-                    <IconButton 
-                      sx={{ 
+                    <IconButton
+                      size={isMobile ? "small" : "medium"}
+                      sx={{
                         backgroundColor: alpha(theme.palette.primary.main, 0.1),
                         '&:hover': {
                           backgroundColor: alpha(theme.palette.primary.main, 0.2),
@@ -231,49 +242,56 @@ const AdminLayout = ({ children, loading = false }) => {
                       }}
                     >
                       <Badge badgeContent={3} color="error">
-                        <NotificationsIcon />
+                        <NotificationsIcon fontSize={isMobile ? "small" : "medium"} />
                       </Badge>
                     </IconButton>
                   </Tooltip>
-                  
+
                   <Tooltip title="Settings">
-                    <IconButton 
+                    <IconButton
                       onClick={() => navigate('/profile')}
-                      sx={{ 
+                      size={isMobile ? "small" : "medium"}
+                      sx={{
                         backgroundColor: alpha(theme.palette.primary.main, 0.1),
                         '&:hover': {
                           backgroundColor: alpha(theme.palette.primary.main, 0.2),
                         }
                       }}
                     >
-                      <SettingsIcon />
+                      <SettingsIcon fontSize={isMobile ? "small" : "medium"} />
                     </IconButton>
                   </Tooltip>
-                  
+
                   <Tooltip title="Help">
-                    <IconButton 
-                      sx={{ 
+                    <IconButton
+                      size={isMobile ? "small" : "medium"}
+                      sx={{
                         backgroundColor: alpha(theme.palette.primary.main, 0.1),
                         '&:hover': {
                           backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                        }
+                        },
+                        display: { xs: 'none', sm: 'flex' }
                       }}
                     >
-                      <HelpIcon />
+                      <HelpIcon fontSize={isMobile ? "small" : "medium"} />
                     </IconButton>
                   </Tooltip>
-                  
+
                   <Tooltip title={mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
-                    <IconButton 
+                    <IconButton
                       onClick={toggleColorMode}
-                      sx={{ 
+                      size={isMobile ? "small" : "medium"}
+                      sx={{
                         backgroundColor: alpha(theme.palette.primary.main, 0.1),
                         '&:hover': {
                           backgroundColor: alpha(theme.palette.primary.main, 0.2),
                         }
                       }}
                     >
-                      {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+                      {mode === 'dark' ?
+                        <LightModeIcon fontSize={isMobile ? "small" : "medium"} /> :
+                        <DarkModeIcon fontSize={isMobile ? "small" : "medium"} />
+                      }
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -281,7 +299,12 @@ const AdminLayout = ({ children, loading = false }) => {
 
               {/* User Info and Logout */}
               <Grid item xs={12} sm={12} md={3}>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: { xs: 'center', md: 'flex-end' },
+                  alignItems: 'center',
+                  mt: { xs: 1, sm: 0 }
+                }}>
                   <Box sx={{ mr: 2, display: { xs: 'none', sm: 'block' } }}>
                     <Typography variant="body2" fontWeight={600}>
                       {user?.name || 'Admin User'}
@@ -290,30 +313,31 @@ const AdminLayout = ({ children, loading = false }) => {
                       {user?.role === 'admin' ? 'Administrator' : 'User'}
                     </Typography>
                   </Box>
-                  
+
                   <Avatar
                     src={user?.profileImage}
                     alt={user?.name || 'Admin'}
-                    sx={{ 
-                      width: 40, 
-                      height: 40,
+                    sx={{
+                      width: { xs: 32, sm: 40 },
+                      height: { xs: 32, sm: 40 },
                       mr: 1,
                       border: `2px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                     }}
                   />
-                  
+
                   <Button
                     variant="outlined"
                     color="error"
-                    size="small"
+                    size={isMobile ? "small" : "medium"}
                     startIcon={<LogoutIcon />}
                     onClick={handleLogout}
-                    sx={{ 
+                    sx={{
                       borderRadius: '8px',
                       textTransform: 'none',
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' }
                     }}
                   >
-                    Logout
+                    {isMobile ? 'Exit' : 'Logout'}
                   </Button>
                 </Box>
               </Grid>
