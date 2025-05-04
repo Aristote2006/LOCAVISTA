@@ -8,8 +8,9 @@
     "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "cd client && npm run build",
-    "install-all": "npm install && cd server && npm install && cd ../client && npm install --legacy-peer-deps"
+    "build": "bash build.sh",
+    "vercel-build": "bash build.sh",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install --legacy-peer-deps --no-package-lock"
   },
   "engines": {
     "node": ">=16.0.0"
