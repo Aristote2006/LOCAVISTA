@@ -146,6 +146,7 @@ const Sidebar = ({ open, onClose }) => {
 
   // Drawer content
   const drawerContent = () => (
+    <>
       {/* Header with logo and close button */}
       <Box
         sx={{
@@ -580,6 +581,7 @@ const Sidebar = ({ open, onClose }) => {
           />
         </Box>
       </Box>
+    </>
   );
 
   return (
