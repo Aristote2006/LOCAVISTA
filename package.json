@@ -1,26 +1,28 @@
 {
   "name": "locavista",
   "version": "1.0.0",
-  "description": "Location-aware platform for local businesses and attractions",
-  "main": "index.js",
+  "description": "LocaVista - Travel and Activity Discovery Platform",
+  "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
     "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd client && npm run build",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "keywords": [
-    "mern",
-    "mongodb",
-    "express",
-    "react",
-    "node",
-    "geolocation"
+    "travel",
+    "activities",
+    "tourism",
+    "mern"
   ],
   "author": "",
-  "license": "MIT",
-  "dependencies": {
+  "license": "ISC",
+  "devDependencies": {
     "concurrently": "^8.2.2"
   }
 }
