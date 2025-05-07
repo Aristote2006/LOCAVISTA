@@ -41,9 +41,9 @@ import {
   ArrowForward as ArrowForwardIcon,
 } from '@mui/icons-material';
 import { useGeolocation } from '../hooks/useGeolocation';
-import { getActivities } from '../services/activityService';
 import ActivityCard from '../components/Activities/ActivityCard';
 import Layout from '../components/Layout/Layout';
+import { useActivities } from '../context/ActivityContext.jsx';
 
 // Fix Leaflet icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -64,23 +64,7 @@ const activityTypes = [
   'other',
 ];
 
-// Calculate distance between two coordinates using Haversine formula
-const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371; // Radius of the earth in km
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in km
-  return distance;
-};
-
-const deg2rad = (deg) => {
-  return deg * (Math.PI / 180);
-};
+// Distance calculation is now handled in the ActivityContext
 
 
 
@@ -95,11 +79,10 @@ const popularCategories = [
 
 const HomePage = () => {
   const theme = useTheme();
-  const { latitude, longitude, error: locationError, loading: locationLoading } = useGeolocation();
-  const [activities, setActivities] = useState([]);
+  // We still need latitude/longitude for UI display purposes
+  const { latitude, longitude, error: locationError } = useGeolocation();
+  const { activities, loading, error } = useActivities();
   const [filteredActivities, setFilteredActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [activityType, setActivityType] = useState('all');
   const [showFeatured, setShowFeatured] = useState(false);
@@ -107,57 +90,15 @@ const HomePage = () => {
 
 
 
-  // Fetch activities when location is available
+  // The activities are now fetched from the ActivityContext
+  // which handles all the logic for fetching, sorting by distance, etc.
+
+  // Set filtered activities when activities change
   useEffect(() => {
-    const fetchActivities = async () => {
-      if (locationLoading) return;
-
-      try {
-        setLoading(true);
-        const filters = {};
-
-        if (latitude && longitude) {
-          filters.lat = latitude;
-          filters.lng = longitude;
-          filters.radius = 50; // 50km radius
-        }
-
-        const result = await getActivities(filters);
-
-        if (result.success) {
-          // Calculate distance for each activity if location is available
-          const activitiesWithDistance = result.data.map(activity => {
-            let distance = null;
-            if (latitude && longitude) {
-              distance = calculateDistance(
-                latitude,
-                longitude,
-                activity.location.coordinates[1],
-                activity.location.coordinates[0]
-              );
-            }
-            return { ...activity, distance };
-          });
-
-          // Sort by distance if location is available
-          if (latitude && longitude) {
-            activitiesWithDistance.sort((a, b) => a.distance - b.distance);
-          }
-
-          setActivities(activitiesWithDistance);
-          setFilteredActivities(activitiesWithDistance);
-        } else {
-          setError('Failed to fetch activities');
-        }
-      } catch (err) {
-        setError('An error occurred while fetching activities');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchActivities();
-  }, [latitude, longitude, locationLoading]);
+    if (activities.length > 0) {
+      setFilteredActivities(activities);
+    }
+  }, [activities]);
 
   // Filter activities based on search term, type, and featured status
   useEffect(() => {
@@ -568,6 +509,28 @@ const HomePage = () => {
                 </Button>
               ))}
             </Box>
+
+            {/* Display Featured Activities */}
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : error ? (
+              <Alert severity="error" sx={{ my: 4, borderRadius: 2 }}>
+                {error}
+              </Alert>
+            ) : (
+              <Grid container spacing={3}>
+                {activities
+                  .filter(activity => activity.featured)
+                  .slice(0, 3) // Show only the first 3 featured activities
+                  .map((activity) => (
+                    <Grid item xs={12} sm={6} md={4} key={activity._id}>
+                      <ActivityCard activity={activity} distance={activity.distance} />
+                    </Grid>
+                  ))}
+              </Grid>
+            )}
           </Box>
 
 

@@ -5,10 +5,12 @@ import { toast } from 'react-toastify';
 import { getActivityById, updateActivity } from '../services/activityService';
 import ActivityForm from '../components/Activities/ActivityForm';
 import AdminLayout from '../components/Layout/AdminLayout';
+import { useActivities } from '../context/ActivityContext.jsx';
 
 const EditActivityPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { updateActivityInContext } = useActivities();
 
   const [activity, setActivity] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -48,6 +50,9 @@ const EditActivityPage = () => {
       const result = await updateActivity(id, formData);
 
       if (result.success) {
+        // Update the activity in the context
+        updateActivityInContext(result.data);
+
         toast.success('Activity updated successfully');
         navigate('/activities');
       } else {

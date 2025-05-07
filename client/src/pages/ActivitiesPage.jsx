@@ -22,9 +22,10 @@ import {
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { toast } from 'react-toastify';
-import { getActivities, deleteActivity } from '../services/activityService';
+import { deleteActivity } from '../services/activityService';
 import ActivityCard from '../components/Activities/ActivityCard';
 import AdminLayout from '../components/Layout/AdminLayout';
+import { useActivities } from '../context/ActivityContext.jsx';
 
 const activityTypes = [
   'all',
@@ -43,10 +44,8 @@ const activityTypes = [
 ];
 
 const ActivitiesPage = () => {
-  const [activities, setActivities] = useState([]);
+  const { activities, loading, error, removeActivity } = useActivities();
   const [filteredActivities, setFilteredActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [activityType, setActivityType] = useState('all');
   const [showFeatured, setShowFeatured] = useState(false);
@@ -56,28 +55,12 @@ const ActivitiesPage = () => {
 
   const navigate = useNavigate();
 
-  // Fetch activities
+  // Set filtered activities when activities change
   useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        setLoading(true);
-        const result = await getActivities();
-
-        if (result.success) {
-          setActivities(result.data);
-          setFilteredActivities(result.data);
-        } else {
-          setError('Failed to fetch activities');
-        }
-      } catch (err) {
-        setError('An error occurred while fetching activities');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchActivities();
-  }, []);
+    if (activities.length > 0) {
+      setFilteredActivities(activities);
+    }
+  }, [activities]);
 
   // Filter activities based on search term, type, and featured status
   useEffect(() => {
@@ -125,8 +108,8 @@ const ActivitiesPage = () => {
       const result = await deleteActivity(activityToDelete._id);
 
       if (result.success) {
-        // Remove activity from state
-        setActivities(activities.filter(a => a._id !== activityToDelete._id));
+        // Remove activity from context
+        removeActivity(activityToDelete._id);
         toast.success('Activity deleted successfully');
       } else {
         toast.error(result.message);

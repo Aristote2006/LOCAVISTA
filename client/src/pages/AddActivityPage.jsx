@@ -5,11 +5,13 @@ import { toast } from 'react-toastify';
 import { createActivity } from '../services/activityService';
 import ActivityForm from '../components/Activities/ActivityForm';
 import AdminLayout from '../components/Layout/AdminLayout';
+import { useActivities } from '../context/ActivityContext.jsx';
 
 const AddActivityPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { addActivity } = useActivities();
 
   const handleSubmit = async (formData) => {
     try {
@@ -19,8 +21,20 @@ const AddActivityPage = () => {
       const result = await createActivity(formData);
 
       if (result.success) {
+        // Add the newly created activity to the context
+        addActivity(result.data);
+
         toast.success('Activity created successfully');
-        navigate('/activities');
+
+        // Ask the user if they want to add another activity or go to the activities list
+        const goToList = window.confirm('Activity created successfully! Do you want to view all activities?');
+
+        if (goToList) {
+          navigate('/activities');
+        } else {
+          // Reset the form by refreshing the page
+          window.location.reload();
+        }
       } else {
         setError(result.message);
         toast.error(result.message);

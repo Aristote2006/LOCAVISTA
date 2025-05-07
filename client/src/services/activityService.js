@@ -30,6 +30,9 @@ export const getActivityById = async (id) => {
 export const createActivity = async (activityData) => {
   try {
     const { data } = await api.post('/api/activities', activityData);
+
+    // The activity is successfully created and returned from the server
+    // We'll handle adding it to the context in the component that calls this function
     return { success: true, data: data.data };
   } catch (error) {
     return {

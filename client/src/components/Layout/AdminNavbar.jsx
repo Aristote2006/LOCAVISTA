@@ -57,7 +57,8 @@ const AdminNavbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
   const { notifications, markAsRead, getUnreadCount } = useNotifications();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -219,7 +220,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
           </Box>
 
           {/* Quick navigation buttons */}
-          <Box sx={{ ml: 3, display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+          <Box sx={{ ml: 3, display: { xs: 'none', lg: 'flex' }, gap: 1 }}>
             <Button
               component={RouterLink}
               to="/"
@@ -273,6 +274,8 @@ const AdminNavbar = ({ toggleSidebar }) => {
             zIndex: searchOpen ? 1200 : 'auto',
             backgroundColor: searchOpen ? theme.palette.background.paper : 'transparent',
             p: searchOpen ? 1 : 0,
+            flexGrow: { md: 1 },
+            justifyContent: { md: 'center' },
           }}
         >
           {searchOpen && (
@@ -290,7 +293,8 @@ const AdminNavbar = ({ toggleSidebar }) => {
               p: '2px 8px',
               display: 'flex',
               alignItems: 'center',
-              width: { xs: '100%', md: 300 },
+              width: { xs: '100%', md: 300, lg: 400 },
+              maxWidth: { md: '50vw' },
               borderRadius: '8px',
               border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
               backgroundColor: alpha(theme.palette.background.default, 0.5),
@@ -548,7 +552,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
                   border: `2px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                 }}
               />
-              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                 <Typography variant="body2" fontWeight={600} align="left">
                   {user?.name || 'Admin'}
                 </Typography>
@@ -556,7 +560,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
                   {user?.role === 'admin' ? 'Administrator' : 'User'}
                 </Typography>
               </Box>
-              <ArrowDropDownIcon sx={{ ml: { xs: 0, sm: 0.5 }, fontSize: { xs: 20, sm: 24 } }} />
+              <ArrowDropDownIcon sx={{ ml: { xs: 0, md: 0.5 }, fontSize: { xs: 20, sm: 24 } }} />
             </Button>
             <Menu
               id="menu-appbar"

@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
 import ThemeProvider, { ThemeContext } from './context/ThemeContext'
+import { ActivityProvider } from './context/ActivityContext.jsx'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -20,7 +21,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             {({ theme }) => (
               <MuiThemeProvider theme={theme}>
                 <CssBaseline />
-                <App />
+                <ActivityProvider>
+                  <App />
+                </ActivityProvider>
                 <ToastContainer
                   position="bottom-right"
                   theme={theme.palette.mode}
