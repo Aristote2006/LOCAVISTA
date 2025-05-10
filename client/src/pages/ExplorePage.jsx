@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -51,7 +52,7 @@ L.Icon.Default.mergeOptions({
 const ExplorePage = () => {
   const theme = useTheme();
   const { latitude, longitude, error: locationError, loading: locationLoading } = useGeolocation();
-  
+
   // State variables
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
@@ -79,20 +80,20 @@ const ExplorePage = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       if (locationLoading) return;
-      
+
       try {
         setLoading(true);
         setError('');
-        
+
         // If location is available, use it; otherwise use default coordinates
         const params = {};
         if (latitude && longitude) {
           params.latitude = latitude;
           params.longitude = longitude;
         }
-        
+
         const result = await getActivities(params);
-        
+
         if (result.success) {
           setActivities(result.data);
           setFilteredActivities(result.data);
@@ -106,35 +107,35 @@ const ExplorePage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchActivities();
   }, [latitude, longitude, locationLoading]);
 
   // Filter activities based on search term, type, and distance
   useEffect(() => {
     if (!activities.length) return;
-    
+
     let filtered = [...activities];
-    
+
     // Filter by search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(activity => 
-        activity.name.toLowerCase().includes(term) || 
+      filtered = filtered.filter(activity =>
+        activity.name.toLowerCase().includes(term) ||
         activity.description.toLowerCase().includes(term)
       );
     }
-    
+
     // Filter by type
     if (activityType !== 'all') {
       filtered = filtered.filter(activity => activity.type === activityType);
     }
-    
+
     // Filter by distance
     if (latitude && longitude && distance < 100) {
       filtered = filtered.filter(activity => activity.distance <= distance);
     }
-    
+
     // Sort activities
     if (sortBy === 'distance' && latitude && longitude) {
       filtered.sort((a, b) => a.distance - b.distance);
@@ -143,7 +144,7 @@ const ExplorePage = () => {
     } else if (sortBy === 'newest') {
       filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
-    
+
     setFilteredActivities(filtered);
   }, [activities, searchTerm, activityType, distance, sortBy, latitude, longitude]);
 
@@ -178,8 +179,8 @@ const ExplorePage = () => {
   // Format distance
   const formatDistance = (distance) => {
     if (!distance && distance !== 0) return 'Unknown distance';
-    return distance < 1 
-      ? `${Math.round(distance * 1000)} m away` 
+    return distance < 1
+      ? `${Math.round(distance * 1000)} m away`
       : `${distance.toFixed(1)} km away`;
   };
 
@@ -463,10 +464,10 @@ const ExplorePage = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              
+
               {/* User location marker */}
               {latitude && longitude && (
-                <Marker 
+                <Marker
                   position={[latitude, longitude]}
                   icon={new L.Icon({
                     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
@@ -482,7 +483,7 @@ const ExplorePage = () => {
                   </Popup>
                 </Marker>
               )}
-              
+
               {/* Activity markers */}
               {filteredActivities.map((activity) => (
                 <Marker
@@ -511,6 +512,8 @@ const ExplorePage = () => {
                       </Typography>
                     )}
                     <Button
+                      component={RouterLink}
+                      to={`/activities/details/${activity._id}`}
                       variant="contained"
                       size="small"
                       fullWidth
@@ -548,8 +551,8 @@ const ExplorePage = () => {
                     <CardMedia
                       component="img"
                       height="200"
-                      image={activity.images && activity.images.length > 0 
-                        ? activity.images[0] 
+                      image={activity.images && activity.images.length > 0
+                        ? activity.images[0]
                         : 'https://via.placeholder.com/400x200?text=No+Image'}
                       alt={activity.name}
                     />
@@ -574,7 +577,7 @@ const ExplorePage = () => {
                         {activity.type}
                       </Typography>
                     </Box>
-                    
+
                     {activity.featured && (
                       <Chip
                         label="Featured"
@@ -590,19 +593,19 @@ const ExplorePage = () => {
                       />
                     )}
                   </Box>
-                  
+
                   <CardContent sx={{ flexGrow: 1, p: 3 }}>
                     <Typography variant="h6" component="h3" fontWeight={700} gutterBottom>
                       {activity.name}
                     </Typography>
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                       <LocationIcon sx={{ color: theme.palette.primary.main, fontSize: 18, mr: 0.5 }} />
                       <Typography variant="body2" color="text.secondary">
                         {formatDistance(activity.distance)}
                       </Typography>
                     </Box>
-                    
+
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -618,9 +621,9 @@ const ExplorePage = () => {
                     >
                       {activity.description}
                     </Typography>
-                    
+
                     <Divider sx={{ my: 2 }} />
-                    
+
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
@@ -630,8 +633,10 @@ const ExplorePage = () => {
                           {activity.phone}
                         </Typography>
                       </Box>
-                      
+
                       <Button
+                        component={RouterLink}
+                        to={`/activities/details/${activity._id}`}
                         variant="contained"
                         color="primary"
                         size="small"

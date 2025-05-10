@@ -12,6 +12,7 @@ import DashboardPage from './pages/DashboardPage'
 import ActivitiesPage from './pages/ActivitiesPage'
 import AddActivityPage from './pages/AddActivityPage'
 import EditActivityPage from './pages/EditActivityPage'
+import ActivityDetailsPage from './pages/ActivityDetailsPage'
 import ProfilePage from './pages/ProfilePage'
 import NotificationsPage from './pages/NotificationsPage'
 import AboutPage from './pages/AboutPage'
@@ -72,6 +73,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/activities/details/:id" element={<ActivityDetailsPage />} />
 
       {/* Protected routes - Admin only */}
       <Route

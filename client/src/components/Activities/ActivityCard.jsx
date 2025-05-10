@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -12,6 +13,10 @@ import {
   Divider,
   Tooltip,
   Zoom,
+  Paper,
+  alpha,
+  useTheme,
+  Avatar,
 } from '@mui/material';
 import {
   Phone as PhoneIcon,
@@ -24,70 +29,166 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Info as InfoIcon,
+  AccessTime as AccessTimeIcon,
+  Favorite as FavoriteIcon,
 } from '@mui/icons-material';
 
 const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false }) => {
   const [currentImage, setCurrentImage] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const theme = useTheme();
 
   const handlePrevImage = (e) => {
     e.stopPropagation();
-    setCurrentImage((prev) => (prev === 0 ? activity.images.length - 1 : prev - 1));
+    if (activity && activity.images && activity.images.length > 0) {
+      setCurrentImage((prev) => (prev === 0 ? activity.images.length - 1 : prev - 1));
+    }
   };
 
   const handleNextImage = (e) => {
     e.stopPropagation();
-    setCurrentImage((prev) => (prev === activity.images.length - 1 ? 0 : prev + 1));
+    if (activity && activity.images && activity.images.length > 0) {
+      setCurrentImage((prev) => (prev === activity.images.length - 1 ? 0 : prev + 1));
+    }
   };
 
   // Generate a random rating between 3.5 and 5 for demo purposes
   const rating = activity.rating || (3.5 + Math.random() * 1.5);
 
+  // Generate random review count for demo purposes
+  const reviewCount = Math.floor(Math.random() * 50) + 5;
+
+  // Format date for display
+  const formattedDate = new Date(activity.createdAt).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+
   return (
     <Zoom in={true} style={{ transitionDelay: '100ms' }}>
       <Card
         className="card-hover"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         sx={{
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
           position: 'relative',
+          borderRadius: '16px',
+          boxShadow: isHovered
+            ? '0 16px 32px rgba(0, 0, 0, 0.15), 0 3px 8px rgba(0, 0, 0, 0.1)'
+            : '0 6px 20px rgba(0, 0, 0, 0.08)',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: isHovered ? 'translateY(-8px)' : 'none',
         }}
       >
-        <div className="carousel-container">
-          <div className="carousel-slide">
-            <img
-              src={activity.images[currentImage]}
-              alt={activity.name}
-              className="carousel-image"
-            />
-          </div>
-          {activity.images.length > 1 && (
+        {/* Image carousel with gradient overlay */}
+        <Box
+          sx={{
+            position: 'relative',
+            height: 220,
+            overflow: 'hidden',
+          }}
+        >
+          <Box
+            component="img"
+            src={activity.images && activity.images.length > 0
+              ? activity.images[currentImage]
+              : 'https://via.placeholder.com/400x300?text=No+Image'}
+            alt={activity.name}
+            sx={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transition: 'transform 0.5s ease',
+              transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+            }}
+          />
+
+          {/* Gradient overlay */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0) 100%)',
+              zIndex: 1,
+            }}
+          />
+
+          {/* Navigation buttons */}
+          {activity.images && activity.images.length > 1 && (
             <>
               <IconButton
-                className="carousel-button carousel-button-prev"
                 onClick={handlePrevImage}
                 size="small"
+                sx={{
+                  position: 'absolute',
+                  left: 8,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.95)' },
+                  zIndex: 2,
+                  opacity: isHovered ? 1 : 0,
+                  transition: 'opacity 0.2s ease',
+                }}
               >
                 <ChevronLeftIcon />
               </IconButton>
               <IconButton
-                className="carousel-button carousel-button-next"
                 onClick={handleNextImage}
                 size="small"
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.95)' },
+                  zIndex: 2,
+                  opacity: isHovered ? 1 : 0,
+                  transition: 'opacity 0.2s ease',
+                }}
               >
                 <ChevronRightIcon />
               </IconButton>
 
               {/* Image indicators */}
-              <Box className="carousel-indicators">
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: 12,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  display: 'flex',
+                  gap: 1,
+                  zIndex: 2,
+                }}
+              >
                 {activity.images.map((_, index) => (
                   <Box
                     key={index}
-                    className={`carousel-indicator ${index === currentImage ? 'active' : ''}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       setCurrentImage(index);
+                    }}
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      backgroundColor: index === currentImage ? 'white' : 'rgba(255, 255, 255, 0.5)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        transform: 'scale(1.2)',
+                        backgroundColor: 'white',
+                      }
                     }}
                   />
                 ))}
@@ -100,17 +201,18 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
             <Box
               sx={{
                 position: 'absolute',
-                top: 0,
+                top: 16,
                 left: 0,
-                backgroundColor: 'secondary.main',
+                backgroundColor: theme.palette.secondary.main,
                 color: 'white',
                 py: 0.5,
-                px: 1.5,
+                px: 2,
+                borderTopRightRadius: 16,
                 borderBottomRightRadius: 16,
                 display: 'flex',
                 alignItems: 'center',
-                boxShadow: 2,
-                zIndex: 1,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                zIndex: 2,
               }}
             >
               <StarIcon fontSize="small" sx={{ mr: 0.5 }} />
@@ -130,51 +232,86 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
               size="small"
               sx={{
                 position: 'absolute',
-                bottom: 10,
-                right: 10,
+                top: 16,
+                right: 16,
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 backdropFilter: 'blur(4px)',
                 fontWeight: 'bold',
-                boxShadow: 2,
-                zIndex: 1,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                zIndex: 2,
+                '& .MuiChip-icon': {
+                  color: theme.palette.primary.main,
+                }
               }}
             />
           )}
-        </div>
 
-        <CardContent sx={{ flexGrow: 1, p: 2 }}>
+          {/* Type badge at bottom */}
+          <Chip
+            label={activity.type}
+            size="small"
+            sx={{
+              position: 'absolute',
+              bottom: 16,
+              left: 16,
+              textTransform: 'capitalize',
+              fontWeight: 'bold',
+              backgroundColor: alpha(theme.palette.primary.main, 0.9),
+              color: 'white',
+              zIndex: 2,
+              borderRadius: '12px',
+            }}
+          />
+        </Box>
+
+        <CardContent sx={{ flexGrow: 1, p: 3, pt: 2.5 }}>
+          {/* Title and date */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-            <Typography variant="h6" component="h2" fontWeight="bold" gutterBottom>
+            <Typography
+              variant="h6"
+              component="h2"
+              fontWeight="bold"
+              sx={{
+                fontSize: '1.25rem',
+                lineHeight: 1.3,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
               {activity.name}
             </Typography>
-            <Chip
-              label={activity.type}
-              size="small"
-              color="primary"
-              sx={{
-                textTransform: 'capitalize',
-                fontWeight: 'bold',
-                borderRadius: '12px',
-              }}
-            />
+
+            <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary', ml: 1, flexShrink: 0 }}>
+              <AccessTimeIcon sx={{ fontSize: 16, mr: 0.5 }} />
+              <Typography variant="caption">
+                {formattedDate}
+              </Typography>
+            </Box>
           </Box>
 
-          {/* Rating */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+          {/* Rating with reviews count */}
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Rating
               value={rating}
               precision={0.5}
               readOnly
               size="small"
               emptyIcon={<StarBorderIcon fontSize="inherit" />}
+              sx={{
+                '& .MuiRating-iconFilled': {
+                  color: '#FF9800',
+                },
+              }}
             />
             <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-              {rating.toFixed(1)}
+              {rating.toFixed(1)} ({reviewCount} reviews)
             </Typography>
           </Box>
 
-          <Divider sx={{ my: 1.5 }} />
-
+          {/* Description */}
           <Typography
             variant="body2"
             color="text.secondary"
@@ -186,18 +323,45 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               mb: 2,
+              lineHeight: 1.6,
             }}
           >
             {activity.description}
           </Typography>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {/* Contact info with styled icons */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1.5,
+              mb: 1,
+            }}
+          >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <PhoneIcon fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
+              <Avatar
+                sx={{
+                  width: 28,
+                  height: 28,
+                  mr: 1.5,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                }}
+              >
+                <PhoneIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
+              </Avatar>
               <Typography variant="body2">{activity.phone}</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <EmailIcon fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
+              <Avatar
+                sx={{
+                  width: 28,
+                  height: 28,
+                  mr: 1.5,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                }}
+              >
+                <EmailIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
+              </Avatar>
               <Typography
                 variant="body2"
                 sx={{
@@ -213,32 +377,85 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
           </Box>
         </CardContent>
 
-        <Divider />
-
-        <CardActions sx={{ p: 1.5, justifyContent: 'space-between' }}>
+        {/* Action buttons */}
+        <CardActions
+          sx={{
+            p: 0,
+            px: 3,
+            pb: 3,
+            pt: 0,
+            justifyContent: 'space-between',
+            mt: -1,
+          }}
+        >
           <Button
+            component={RouterLink}
+            to={`/activities/details/${activity._id}`}
             variant="contained"
             color="primary"
-            size="small"
+            size="medium"
             startIcon={<InfoIcon />}
-            sx={{ borderRadius: '20px' }}
+            sx={{
+              borderRadius: '50px',
+              px: 3,
+              py: 1,
+              fontWeight: 600,
+              textTransform: 'none',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+              '&:hover': {
+                boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+              }
+            }}
           >
             View Details
           </Button>
 
-          {isAdmin && (
+          {isAdmin ? (
             <Box>
-              <Tooltip title="Edit">
-                <IconButton size="small" color="primary" onClick={() => onEdit(activity._id)}>
+              <Tooltip title="Edit" arrow>
+                <IconButton
+                  color="primary"
+                  onClick={() => onEdit(activity._id)}
+                  sx={{
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    mr: 1,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.2),
+                    }
+                  }}
+                >
                   <EditIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete">
-                <IconButton size="small" color="error" onClick={() => onDelete(activity._id)}>
+              <Tooltip title="Delete" arrow>
+                <IconButton
+                  color="error"
+                  onClick={() => onDelete(activity._id)}
+                  sx={{
+                    backgroundColor: alpha(theme.palette.error.main, 0.1),
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.error.main, 0.2),
+                    }
+                  }}
+                >
                   <DeleteIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             </Box>
+          ) : (
+            <Tooltip title="Save for later" arrow>
+              <IconButton
+                color="secondary"
+                sx={{
+                  backgroundColor: alpha(theme.palette.secondary.main, 0.1),
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.secondary.main, 0.2),
+                  }
+                }}
+              >
+                <FavoriteIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
           )}
         </CardActions>
       </Card>

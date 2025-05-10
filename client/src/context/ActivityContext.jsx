@@ -40,9 +40,13 @@ export const ActivityProvider = ({ children }) => {
       const filters = {};
 
       if (latitude && longitude) {
+        // Use the exact parameter names expected by the server
         filters.lat = latitude;
         filters.lng = longitude;
         filters.radius = 50; // 50km radius
+
+        // Log for debugging
+        console.log('Sending location filters:', filters);
       }
 
       const result = await getActivities(filters);
