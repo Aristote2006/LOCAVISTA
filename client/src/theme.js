@@ -30,16 +30,16 @@ export const getDesignTokens = (mode) => ({
       light: mode === 'dark' ? '#2C2C2C' : lightColor,
       accent: accentColor,
       sidebar: mode === 'dark' ? '#1A1A1A' : '#FFFFFF',
-      card: mode === 'dark' ? '#252525' : '#FFFFFF',
+      card: mode === 'dark' ? '#1E1E1E' : '#FFFFFF',
       gradient: mode === 'dark'
-        ? 'linear-gradient(135deg, rgba(46, 125, 50, 0.15), rgba(21, 101, 192, 0.15))'
+        ? 'linear-gradient(135deg, rgba(46, 125, 50, 0.25), rgba(21, 101, 192, 0.25))'
         : 'linear-gradient(135deg, rgba(46, 125, 50, 0.1), rgba(30, 136, 229, 0.1))',
     },
     text: {
-      primary: mode === 'dark' ? '#E0E0E0' : '#263238',
-      secondary: mode === 'dark' ? '#AAAAAA' : '#546E7A',
-      disabled: mode === 'dark' ? '#666666' : '#90A4AE',
-      hint: mode === 'dark' ? '#777777' : '#78909C',
+      primary: mode === 'dark' ? '#F5F5F5' : '#263238',
+      secondary: mode === 'dark' ? '#CCCCCC' : '#546E7A',
+      disabled: mode === 'dark' ? '#777777' : '#90A4AE',
+      hint: mode === 'dark' ? '#999999' : '#78909C',
     },
     success: {
       main: '#43A047',
@@ -148,27 +148,33 @@ export const getDesignTokens = (mode) => ({
           borderRadius: 30,
           padding: '10px 24px',
           boxShadow: mode === 'dark'
-            ? '0px 4px 12px rgba(0, 0, 0, 0.3)'
+            ? '0px 4px 12px rgba(0, 0, 0, 0.4), 0px 0px 0px 1px rgba(255, 255, 255, 0.05)'
             : '0px 4px 12px rgba(0, 0, 0, 0.1)',
           transition: 'all 0.3s ease',
           '&:hover': {
             transform: 'translateY(-2px)',
             boxShadow: mode === 'dark'
-              ? '0px 8px 16px rgba(0, 0, 0, 0.4)'
+              ? '0px 8px 16px rgba(0, 0, 0, 0.5), 0px 0px 0px 1px rgba(255, 255, 255, 0.08)'
               : '0px 8px 16px rgba(0, 0, 0, 0.15)',
           },
         },
         contained: {
+          backgroundImage: mode === 'dark'
+            ? 'linear-gradient(145deg, rgba(70, 70, 70, 0.2) 0%, rgba(30, 30, 30, 0.1) 100%)'
+            : 'none',
           '&:hover': {
             boxShadow: mode === 'dark'
-              ? '0px 8px 16px rgba(0, 0, 0, 0.5)'
+              ? '0px 8px 16px rgba(0, 0, 0, 0.6), 0px 0px 0px 1px rgba(255, 255, 255, 0.1)'
               : '0px 8px 16px rgba(0, 0, 0, 0.2)',
           },
         },
         outlined: {
           borderWidth: 2,
+          borderColor: mode === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'inherit',
           '&:hover': {
             borderWidth: 2,
+            borderColor: mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'inherit',
+            backgroundColor: mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)',
           },
         },
       },
@@ -178,15 +184,19 @@ export const getDesignTokens = (mode) => ({
         root: {
           borderRadius: 16,
           boxShadow: mode === 'dark'
-            ? '0px 6px 16px rgba(0, 0, 0, 0.3)'
+            ? '0px 6px 16px rgba(0, 0, 0, 0.4), 0px 0px 0px 1px rgba(255, 255, 255, 0.05)'
             : '0px 6px 16px rgba(0, 0, 0, 0.08)',
           overflow: 'hidden',
           transition: 'all 0.3s ease',
-          backgroundColor: mode === 'dark' ? '#252525' : '#FFFFFF',
+          backgroundColor: mode === 'dark' ? '#1E1E1E' : '#FFFFFF',
+          border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
+          backgroundImage: mode === 'dark'
+            ? 'linear-gradient(145deg, rgba(40, 40, 40, 0.4) 0%, rgba(20, 20, 20, 0.2) 100%)'
+            : 'none',
           '&:hover': {
             transform: 'translateY(-5px)',
             boxShadow: mode === 'dark'
-              ? '0px 12px 24px rgba(0, 0, 0, 0.4)'
+              ? '0px 12px 24px rgba(0, 0, 0, 0.5), 0px 0px 0px 1px rgba(255, 255, 255, 0.08)'
               : '0px 12px 24px rgba(0, 0, 0, 0.12)',
           },
         },
@@ -196,26 +206,30 @@ export const getDesignTokens = (mode) => ({
       styleOverrides: {
         root: {
           borderRadius: 16,
-          backgroundColor: mode === 'dark' ? '#252525' : '#FFFFFF',
+          backgroundColor: mode === 'dark' ? '#1E1E1E' : '#FFFFFF',
+          border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
+          backgroundImage: mode === 'dark'
+            ? 'linear-gradient(145deg, rgba(40, 40, 40, 0.4) 0%, rgba(20, 20, 20, 0.2) 100%)'
+            : 'none',
         },
         elevation1: {
           boxShadow: mode === 'dark'
-            ? '0px 4px 12px rgba(0, 0, 0, 0.2)'
+            ? '0px 4px 12px rgba(0, 0, 0, 0.3), 0px 0px 0px 1px rgba(255, 255, 255, 0.05)'
             : '0px 4px 12px rgba(0, 0, 0, 0.05)',
         },
         elevation2: {
           boxShadow: mode === 'dark'
-            ? '0px 6px 16px rgba(0, 0, 0, 0.25)'
+            ? '0px 6px 16px rgba(0, 0, 0, 0.35), 0px 0px 0px 1px rgba(255, 255, 255, 0.05)'
             : '0px 6px 16px rgba(0, 0, 0, 0.08)',
         },
         elevation3: {
           boxShadow: mode === 'dark'
-            ? '0px 8px 20px rgba(0, 0, 0, 0.3)'
+            ? '0px 8px 20px rgba(0, 0, 0, 0.4), 0px 0px 0px 1px rgba(255, 255, 255, 0.05)'
             : '0px 8px 20px rgba(0, 0, 0, 0.1)',
         },
         elevation4: {
           boxShadow: mode === 'dark'
-            ? '0px 10px 24px rgba(0, 0, 0, 0.35)'
+            ? '0px 10px 24px rgba(0, 0, 0, 0.45), 0px 0px 0px 1px rgba(255, 255, 255, 0.05)'
             : '0px 10px 24px rgba(0, 0, 0, 0.12)',
         },
       },
@@ -224,9 +238,12 @@ export const getDesignTokens = (mode) => ({
       styleOverrides: {
         root: {
           boxShadow: mode === 'dark'
-            ? '0px 2px 10px rgba(0, 0, 0, 0.3)'
+            ? '0px 2px 10px rgba(0, 0, 0, 0.4), 0px 0px 0px 1px rgba(255, 255, 255, 0.05)'
             : '0px 2px 10px rgba(0, 0, 0, 0.08)',
           backgroundColor: mode === 'dark' ? '#1A1A1A' : primaryColor,
+          backgroundImage: mode === 'dark'
+            ? 'linear-gradient(145deg, rgba(35, 35, 35, 0.9) 0%, rgba(20, 20, 20, 0.9) 100%)'
+            : `linear-gradient(145deg, ${primaryColor} 0%, ${darkColor} 100%)`,
         },
       },
     },
@@ -235,11 +252,14 @@ export const getDesignTokens = (mode) => ({
         paper: {
           backgroundColor: mode === 'dark' ? '#1A1A1A' : '#FFFFFF',
           backgroundImage: mode === 'dark'
-            ? 'linear-gradient(rgba(26, 26, 26, 0.95), rgba(26, 26, 26, 0.95)), url("https://www.transparenttextures.com/patterns/cubes.png")'
-            : 'linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url("https://www.transparenttextures.com/patterns/cubes.png")',
+            ? 'linear-gradient(rgba(26, 26, 26, 0.97), rgba(26, 26, 26, 0.97)), url("https://www.transparenttextures.com/patterns/cubes.png")'
+            : 'linear-gradient(rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.97)), url("https://www.transparenttextures.com/patterns/cubes.png")',
           borderRight: mode === 'dark'
-            ? '1px solid rgba(255, 255, 255, 0.05)'
+            ? '1px solid rgba(255, 255, 255, 0.08)'
             : '1px solid rgba(0, 0, 0, 0.05)',
+          boxShadow: mode === 'dark'
+            ? '5px 0px 15px rgba(0, 0, 0, 0.3)'
+            : '2px 0px 10px rgba(0, 0, 0, 0.05)',
         },
       },
     },
@@ -248,9 +268,29 @@ export const getDesignTokens = (mode) => ({
         root: {
           '& .MuiOutlinedInput-root': {
             borderRadius: 12,
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: primaryColor,
+            backgroundColor: mode === 'dark' ? 'rgba(30, 30, 30, 0.8)' : 'transparent',
+            '&.Mui-focused': {
+              backgroundColor: mode === 'dark' ? 'rgba(40, 40, 40, 0.9)' : 'transparent',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderWidth: 2,
+                borderColor: mode === 'dark' ? alpha(primaryColor, 0.8) : primaryColor,
+              },
             },
+            '&:hover': {
+              backgroundColor: mode === 'dark' ? 'rgba(40, 40, 40, 0.8)' : 'transparent',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: mode === 'dark' ? alpha(primaryColor, 0.7) : primaryColor,
+              },
+            },
+          },
+          '& .MuiInputLabel-root': {
+            color: mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'inherit',
+            '&.Mui-focused': {
+              color: mode === 'dark' ? primaryColor : 'inherit',
+            },
+          },
+          '& .MuiInputBase-input': {
+            color: mode === 'dark' ? '#FFFFFF' : 'inherit',
           },
         },
       },
@@ -260,6 +300,26 @@ export const getDesignTokens = (mode) => ({
         root: {
           borderRadius: 30,
           fontWeight: 500,
+          backgroundColor: mode === 'dark' ? 'rgba(50, 50, 50, 0.9)' : undefined,
+          border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : undefined,
+          color: mode === 'dark' ? '#FFFFFF' : undefined,
+          '&.MuiChip-outlined': {
+            borderColor: mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : undefined,
+          },
+          '&.MuiChip-filled': {
+            backgroundImage: mode === 'dark'
+              ? 'linear-gradient(145deg, rgba(60, 60, 60, 0.4) 0%, rgba(40, 40, 40, 0.2) 100%)'
+              : 'none',
+          },
+        },
+        icon: {
+          color: mode === 'dark' ? 'rgba(255, 255, 255, 0.8)' : undefined,
+        },
+        deleteIcon: {
+          color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : undefined,
+          '&:hover': {
+            color: mode === 'dark' ? '#FFFFFF' : undefined,
+          },
         },
       },
     },
@@ -267,8 +327,13 @@ export const getDesignTokens = (mode) => ({
       styleOverrides: {
         root: {
           boxShadow: mode === 'dark'
-            ? '0px 2px 8px rgba(0, 0, 0, 0.3)'
+            ? '0px 2px 8px rgba(0, 0, 0, 0.4), 0px 0px 0px 1px rgba(255, 255, 255, 0.05)'
             : '0px 2px 8px rgba(0, 0, 0, 0.1)',
+          border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+          backgroundColor: mode === 'dark' ? 'rgba(50, 50, 50, 0.9)' : undefined,
+          '& .MuiSvgIcon-root': {
+            color: mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : undefined,
+          },
         },
       },
     },
@@ -296,6 +361,34 @@ export const getDesignTokens = (mode) => ({
       styleOverrides: {
         root: {
           borderRadius: 12,
+          border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+          backgroundImage: mode === 'dark'
+            ? 'linear-gradient(145deg, rgba(40, 40, 40, 0.4) 0%, rgba(20, 20, 20, 0.2) 100%)'
+            : 'none',
+        },
+        standardSuccess: {
+          backgroundColor: mode === 'dark' ? alpha('#43A047', 0.15) : undefined,
+          '& .MuiAlert-icon': {
+            color: mode === 'dark' ? '#66BB6A' : undefined,
+          },
+        },
+        standardError: {
+          backgroundColor: mode === 'dark' ? alpha('#E53935', 0.15) : undefined,
+          '& .MuiAlert-icon': {
+            color: mode === 'dark' ? '#EF5350' : undefined,
+          },
+        },
+        standardWarning: {
+          backgroundColor: mode === 'dark' ? alpha('#FFA000', 0.15) : undefined,
+          '& .MuiAlert-icon': {
+            color: mode === 'dark' ? '#FFB74D' : undefined,
+          },
+        },
+        standardInfo: {
+          backgroundColor: mode === 'dark' ? alpha('#1E88E5', 0.15) : undefined,
+          '& .MuiAlert-icon': {
+            color: mode === 'dark' ? '#42A5F5' : undefined,
+          },
         },
       },
     },
@@ -359,7 +452,28 @@ export const getDesignTokens = (mode) => ({
               background: mode === 'dark' ? '#777' : '#999',
             },
           },
+          // Add subtle background pattern in dark mode
+          backgroundImage: mode === 'dark'
+            ? 'linear-gradient(rgba(18, 18, 18, 0.97), rgba(18, 18, 18, 0.97)), url("https://www.transparenttextures.com/patterns/subtle-dark-vertical.png")'
+            : 'none',
+          // Improve text rendering in dark mode
+          ...(mode === 'dark' && {
+            color: '#F5F5F5',
+            textShadow: '0 1px 1px rgba(0, 0, 0, 0.7)',
+          }),
+          // Add subtle transition for mode changes
+          transition: 'background-color 0.3s ease, color 0.3s ease',
         },
+        // Improve link styling in dark mode
+        'a': mode === 'dark' ? {
+          color: '#90CAF9',
+          textDecoration: 'none',
+          transition: 'color 0.2s ease',
+          '&:hover': {
+            color: '#42A5F5',
+            textDecoration: 'underline',
+          }
+        } : {},
       },
     },
   },

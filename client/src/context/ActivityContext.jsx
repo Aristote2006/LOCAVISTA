@@ -28,34 +28,58 @@ export const ActivityProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Fetch activities when location is available
+  // Fetch activities when component mounts
   useEffect(() => {
+    console.log("ActivityContext: Fetching activities on mount...");
     fetchActivities();
+  }, []);
+
+  // Update distances when location changes
+  useEffect(() => {
+    if (activities.length > 0 && latitude && longitude) {
+      console.log("Location changed, updating distances...");
+
+      // Recalculate distances
+      const updatedActivities = activities.map(activity => {
+        let distance = null;
+        if (activity.location && activity.location.coordinates) {
+          distance = calculateDistance(
+            latitude,
+            longitude,
+            activity.location.coordinates[1],
+            activity.location.coordinates[0]
+          );
+        }
+        return { ...activity, distance };
+      });
+
+      // Sort by distance
+      updatedActivities.sort((a, b) => {
+        if (a.distance === null) return 1;
+        if (b.distance === null) return -1;
+        return a.distance - b.distance;
+      });
+
+      setActivities(updatedActivities);
+    }
   }, [latitude, longitude]);
 
   // Function to fetch activities
   const fetchActivities = async () => {
     try {
       setLoading(true);
-      const filters = {};
+      console.log("Fetching activities from API...");
 
-      if (latitude && longitude) {
-        // Use the exact parameter names expected by the server
-        filters.lat = latitude;
-        filters.lng = longitude;
-        filters.radius = 50; // 50km radius
-
-        // Log for debugging
-        console.log('Sending location filters:', filters);
-      }
-
-      const result = await getActivities(filters);
+      // Always fetch all activities first, without location filters
+      const result = await getActivities({});
 
       if (result.success) {
+        console.log("Successfully fetched activities:", result.data);
+
         // Calculate distance for each activity if location is available
         const activitiesWithDistance = result.data.map(activity => {
           let distance = null;
-          if (latitude && longitude) {
+          if (latitude && longitude && activity.location && activity.location.coordinates) {
             distance = calculateDistance(
               latitude,
               longitude,
@@ -68,14 +92,24 @@ export const ActivityProvider = ({ children }) => {
 
         // Sort by distance if location is available
         if (latitude && longitude) {
-          activitiesWithDistance.sort((a, b) => a.distance - b.distance);
+          activitiesWithDistance.sort((a, b) => {
+            // Handle null distances (put them at the end)
+            if (a.distance === null) return 1;
+            if (b.distance === null) return -1;
+            return a.distance - b.distance;
+          });
+        } else {
+          // If no location, sort by creation date (newest first)
+          activitiesWithDistance.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         }
 
         setActivities(activitiesWithDistance);
       } else {
+        console.error("Failed to fetch activities:", result.message);
         setError('Failed to fetch activities');
       }
     } catch (err) {
+      console.error("Error fetching activities:", err);
       setError('An error occurred while fetching activities');
     } finally {
       setLoading(false);

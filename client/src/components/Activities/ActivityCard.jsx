@@ -79,8 +79,12 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
           position: 'relative',
           borderRadius: '16px',
           boxShadow: isHovered
-            ? '0 16px 32px rgba(0, 0, 0, 0.15), 0 3px 8px rgba(0, 0, 0, 0.1)'
-            : '0 6px 20px rgba(0, 0, 0, 0.08)',
+            ? theme.palette.mode === 'dark'
+              ? '0 16px 32px rgba(0, 0, 0, 0.5), 0 3px 8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+              : '0 16px 32px rgba(0, 0, 0, 0.15), 0 3px 8px rgba(0, 0, 0, 0.1)'
+            : theme.palette.mode === 'dark'
+              ? '0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+              : '0 6px 20px rgba(0, 0, 0, 0.08)',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           transform: isHovered ? 'translateY(-8px)' : 'none',
         }}
@@ -116,7 +120,9 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0) 100%)',
+              background: theme.palette.mode === 'dark'
+                ? 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.2) 100%)'
+                : 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0) 100%)',
               zIndex: 1,
             }}
           />
@@ -132,8 +138,16 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
                   left: 8,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                  '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.95)' },
+                  backgroundColor: theme.palette.mode === 'dark'
+                    ? 'rgba(30, 30, 30, 0.8)'
+                    : 'rgba(255, 255, 255, 0.8)',
+                  color: theme.palette.mode === 'dark' ? '#FFFFFF' : 'inherit',
+                  border: theme.palette.mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.2)' : 'none',
+                  '&:hover': {
+                    backgroundColor: theme.palette.mode === 'dark'
+                      ? 'rgba(40, 40, 40, 0.9)'
+                      : 'rgba(255, 255, 255, 0.95)',
+                  },
                   zIndex: 2,
                   opacity: isHovered ? 1 : 0,
                   transition: 'opacity 0.2s ease',
@@ -149,8 +163,16 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
                   right: 8,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                  '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.95)' },
+                  backgroundColor: theme.palette.mode === 'dark'
+                    ? 'rgba(30, 30, 30, 0.8)'
+                    : 'rgba(255, 255, 255, 0.8)',
+                  color: theme.palette.mode === 'dark' ? '#FFFFFF' : 'inherit',
+                  border: theme.palette.mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.2)' : 'none',
+                  '&:hover': {
+                    backgroundColor: theme.palette.mode === 'dark'
+                      ? 'rgba(40, 40, 40, 0.9)'
+                      : 'rgba(255, 255, 255, 0.95)',
+                  },
                   zIndex: 2,
                   opacity: isHovered ? 1 : 0,
                   transition: 'opacity 0.2s ease',
@@ -234,10 +256,16 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
                 position: 'absolute',
                 top: 16,
                 right: 16,
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                backgroundColor: theme.palette.mode === 'dark'
+                  ? 'rgba(30, 30, 30, 0.85)'
+                  : 'rgba(255, 255, 255, 0.9)',
                 backdropFilter: 'blur(4px)',
                 fontWeight: 'bold',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                color: theme.palette.mode === 'dark' ? '#FFFFFF' : 'inherit',
+                border: theme.palette.mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.15)' : 'none',
+                boxShadow: theme.palette.mode === 'dark'
+                  ? '0 2px 8px rgba(0,0,0,0.3)'
+                  : '0 2px 8px rgba(0,0,0,0.15)',
                 zIndex: 2,
                 '& .MuiChip-icon': {
                   color: theme.palette.primary.main,
@@ -344,7 +372,12 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
                   width: 28,
                   height: 28,
                   mr: 1.5,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                  backgroundColor: theme.palette.mode === 'dark'
+                    ? alpha(theme.palette.primary.main, 0.2)
+                    : alpha(theme.palette.primary.main, 0.1),
+                  border: theme.palette.mode === 'dark'
+                    ? '1px solid rgba(255, 255, 255, 0.1)'
+                    : 'none',
                 }}
               >
                 <PhoneIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
@@ -357,7 +390,12 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
                   width: 28,
                   height: 28,
                   mr: 1.5,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                  backgroundColor: theme.palette.mode === 'dark'
+                    ? alpha(theme.palette.primary.main, 0.2)
+                    : alpha(theme.palette.primary.main, 0.1),
+                  border: theme.palette.mode === 'dark'
+                    ? '1px solid rgba(255, 255, 255, 0.1)'
+                    : 'none',
                 }}
               >
                 <EmailIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
@@ -401,9 +439,16 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
               py: 1,
               fontWeight: 600,
               textTransform: 'none',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+              boxShadow: theme.palette.mode === 'dark'
+                ? '0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+                : '0 4px 12px rgba(0, 0, 0, 0.1)',
+              backgroundImage: theme.palette.mode === 'dark'
+                ? 'linear-gradient(145deg, rgba(70, 70, 70, 0.2) 0%, rgba(30, 30, 30, 0.1) 100%)'
+                : 'none',
               '&:hover': {
-                boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+                boxShadow: theme.palette.mode === 'dark'
+                  ? '0 6px 16px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08)'
+                  : '0 6px 16px rgba(0, 0, 0, 0.2)',
               }
             }}
           >
@@ -417,10 +462,17 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
                   color="primary"
                   onClick={() => onEdit(activity._id)}
                   sx={{
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    backgroundColor: theme.palette.mode === 'dark'
+                      ? alpha(theme.palette.primary.main, 0.15)
+                      : alpha(theme.palette.primary.main, 0.1),
+                    border: theme.palette.mode === 'dark'
+                      ? '1px solid rgba(255, 255, 255, 0.05)'
+                      : 'none',
                     mr: 1,
                     '&:hover': {
-                      backgroundColor: alpha(theme.palette.primary.main, 0.2),
+                      backgroundColor: theme.palette.mode === 'dark'
+                        ? alpha(theme.palette.primary.main, 0.25)
+                        : alpha(theme.palette.primary.main, 0.2),
                     }
                   }}
                 >
@@ -432,9 +484,16 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
                   color="error"
                   onClick={() => onDelete(activity._id)}
                   sx={{
-                    backgroundColor: alpha(theme.palette.error.main, 0.1),
+                    backgroundColor: theme.palette.mode === 'dark'
+                      ? alpha(theme.palette.error.main, 0.15)
+                      : alpha(theme.palette.error.main, 0.1),
+                    border: theme.palette.mode === 'dark'
+                      ? '1px solid rgba(255, 255, 255, 0.05)'
+                      : 'none',
                     '&:hover': {
-                      backgroundColor: alpha(theme.palette.error.main, 0.2),
+                      backgroundColor: theme.palette.mode === 'dark'
+                        ? alpha(theme.palette.error.main, 0.25)
+                        : alpha(theme.palette.error.main, 0.2),
                     }
                   }}
                 >
@@ -447,9 +506,16 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
               <IconButton
                 color="secondary"
                 sx={{
-                  backgroundColor: alpha(theme.palette.secondary.main, 0.1),
+                  backgroundColor: theme.palette.mode === 'dark'
+                    ? alpha(theme.palette.secondary.main, 0.15)
+                    : alpha(theme.palette.secondary.main, 0.1),
+                  border: theme.palette.mode === 'dark'
+                    ? '1px solid rgba(255, 255, 255, 0.05)'
+                    : 'none',
                   '&:hover': {
-                    backgroundColor: alpha(theme.palette.secondary.main, 0.2),
+                    backgroundColor: theme.palette.mode === 'dark'
+                      ? alpha(theme.palette.secondary.main, 0.25)
+                      : alpha(theme.palette.secondary.main, 0.2),
                   }
                 }}
               >

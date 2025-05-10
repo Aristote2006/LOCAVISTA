@@ -1048,10 +1048,14 @@ const HomePage = () => {
             </Alert>
           ) : (
             <>
-              {filteredActivities.length > 0 ? (
+              {activities.length === 0 ? (
+                <Alert severity="info" sx={{ my: 4, borderRadius: 2 }}>
+                  No activities have been added yet. Check back later for exciting destinations!
+                </Alert>
+              ) : filteredActivities.length > 0 ? (
                 <>
                   {/* Featured Activities */}
-                  {showFeatured && (
+                  {showFeatured && filteredActivities.some(activity => activity.featured) && (
                     <Box sx={{ mt: 4, mb: 6 }}>
                       <Typography
                         variant="h4"
@@ -1128,7 +1132,17 @@ const HomePage = () => {
                     <Divider sx={{ mb: 3 }} />
                     <Grid container spacing={3}>
                       {filteredActivities
-                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Show newest first
+                        .sort((a, b) => {
+                          // If both have distance, sort by distance
+                          if (a.distance && b.distance) {
+                            return a.distance - b.distance;
+                          }
+                          // If only one has distance, prioritize the one with distance
+                          if (a.distance) return -1;
+                          if (b.distance) return 1;
+                          // Otherwise sort by creation date
+                          return new Date(b.createdAt) - new Date(a.createdAt);
+                        })
                         .map((activity) => (
                           <Grid item xs={12} sm={6} md={4} key={activity._id}>
                             <ActivityCard activity={activity} distance={activity.distance} />
@@ -1151,7 +1165,7 @@ const HomePage = () => {
                 </>
               ) : (
                 <Alert severity="info" sx={{ my: 4, borderRadius: 2 }}>
-                  No activities found matching your criteria.
+                  No activities found matching your criteria. Try adjusting your filters.
                 </Alert>
               )}
             </>

@@ -192,7 +192,11 @@ const ActivitiesPage = () => {
           </Alert>
         ) : (
           <>
-            {filteredActivities.length > 0 ? (
+            {activities.length === 0 ? (
+              <Alert severity="info" sx={{ my: 4 }}>
+                No activities have been added yet. Click the "Add Activity" button to create your first activity.
+              </Alert>
+            ) : filteredActivities.length > 0 ? (
               <Grid container spacing={3}>
                 {filteredActivities.map((activity) => (
                   <Grid item xs={12} sm={6} md={4} key={activity._id}>
@@ -207,7 +211,7 @@ const ActivitiesPage = () => {
               </Grid>
             ) : (
               <Alert severity="info" sx={{ my: 4 }}>
-                No activities found matching your criteria.
+                No activities found matching your criteria. Try adjusting your filters.
               </Alert>
             )}
           </>
