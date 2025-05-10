@@ -90,31 +90,50 @@ export const ActivityProvider = ({ children }) => {
         newActivity.location.coordinates[0]
       );
     }
-    
-    const activityWithDistance = { ...newActivity, distance };
-    
+
+    // Make sure the activity has a createdAt timestamp
+    const activityWithDistance = {
+      ...newActivity,
+      distance,
+      createdAt: newActivity.createdAt || new Date().toISOString()
+    };
+
     // Add to the beginning of the array to show newest first
     setActivities(prevActivities => [activityWithDistance, ...prevActivities]);
+
+    // Log for debugging
+    console.log('Activity added to context:', activityWithDistance);
   };
 
   // Function to update an activity in the context
   const updateActivityInContext = (updatedActivity) => {
-    setActivities(prevActivities => 
-      prevActivities.map(activity => 
-        activity._id === updatedActivity._id ? 
-          { 
-            ...updatedActivity, 
-            distance: activity.distance 
+    setActivities(prevActivities =>
+      prevActivities.map(activity =>
+        activity._id === updatedActivity._id ?
+          {
+            ...updatedActivity,
+            distance: activity.distance,
+            // Preserve the original createdAt timestamp
+            createdAt: activity.createdAt || updatedActivity.createdAt || new Date().toISOString()
           } : activity
       )
     );
+
+    // Log for debugging
+    console.log('Activity updated in context:', updatedActivity);
   };
 
   // Function to remove an activity from the context
   const removeActivity = (activityId) => {
-    setActivities(prevActivities => 
+    // Find the activity before removing it (for logging)
+    const activityToRemove = activities.find(activity => activity._id === activityId);
+
+    setActivities(prevActivities =>
       prevActivities.filter(activity => activity._id !== activityId)
     );
+
+    // Log for debugging
+    console.log('Activity removed from context:', activityToRemove);
   };
 
   return (

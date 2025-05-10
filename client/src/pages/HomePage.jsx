@@ -520,16 +520,25 @@ const HomePage = () => {
                 {error}
               </Alert>
             ) : (
-              <Grid container spacing={3}>
-                {activities
-                  .filter(activity => activity.featured)
-                  .slice(0, 3) // Show only the first 3 featured activities
-                  .map((activity) => (
-                    <Grid item xs={12} sm={6} md={4} key={activity._id}>
-                      <ActivityCard activity={activity} distance={activity.distance} />
-                    </Grid>
-                  ))}
-              </Grid>
+              <>
+                {activities.filter(activity => activity.featured).length > 0 ? (
+                  <Grid container spacing={3}>
+                    {activities
+                      .filter(activity => activity.featured)
+                      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Show newest first
+                      .slice(0, 3) // Show only the first 3 featured activities
+                      .map((activity) => (
+                        <Grid item xs={12} sm={6} md={4} key={activity._id}>
+                          <ActivityCard activity={activity} distance={activity.distance} />
+                        </Grid>
+                      ))}
+                  </Grid>
+                ) : (
+                  <Alert severity="info" sx={{ my: 4, borderRadius: 2 }}>
+                    No featured activities available yet. Admin-created featured activities will appear here.
+                  </Alert>
+                )}
+              </>
             )}
           </Box>
 
@@ -1070,9 +1079,22 @@ const HomePage = () => {
                       <Grid container spacing={3}>
                         {filteredActivities
                           .filter((activity) => activity.featured)
+                          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Show newest first
                           .map((activity) => (
                             <Grid item xs={12} sm={6} md={4} key={activity._id}>
                               <ActivityCard activity={activity} distance={activity.distance} />
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  display: 'block',
+                                  textAlign: 'right',
+                                  mt: 0.5,
+                                  color: 'text.secondary',
+                                  fontStyle: 'italic'
+                                }}
+                              >
+                                Added: {new Date(activity.createdAt).toLocaleDateString()}
+                              </Typography>
                             </Grid>
                           ))}
                       </Grid>
@@ -1105,11 +1127,25 @@ const HomePage = () => {
                     </Typography>
                     <Divider sx={{ mb: 3 }} />
                     <Grid container spacing={3}>
-                      {filteredActivities.map((activity) => (
-                        <Grid item xs={12} sm={6} md={4} key={activity._id}>
-                          <ActivityCard activity={activity} distance={activity.distance} />
-                        </Grid>
-                      ))}
+                      {filteredActivities
+                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Show newest first
+                        .map((activity) => (
+                          <Grid item xs={12} sm={6} md={4} key={activity._id}>
+                            <ActivityCard activity={activity} distance={activity.distance} />
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                display: 'block',
+                                textAlign: 'right',
+                                mt: 0.5,
+                                color: 'text.secondary',
+                                fontStyle: 'italic'
+                              }}
+                            >
+                              Added: {new Date(activity.createdAt).toLocaleDateString()}
+                            </Typography>
+                          </Grid>
+                        ))}
                     </Grid>
                   </Box>
                 </>
@@ -1172,12 +1208,14 @@ const HomePage = () => {
           </Box>
 
           <Box sx={{ position: 'relative', mb: 6 }}>
-            <Grid container spacing={2}>
-              {filteredActivities
-                .filter(activity => activity.featured)
-                .slice(0, 4)
-                .map((activity) => (
-                <Grid item xs={12} sm={6} md={3} key={activity._id}>
+            {filteredActivities.filter(activity => activity.featured).length > 0 ? (
+              <Grid container spacing={2}>
+                {filteredActivities
+                  .filter(activity => activity.featured)
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Show newest first
+                  .slice(0, 4)
+                  .map((activity) => (
+                  <Grid item xs={12} sm={6} md={3} key={activity._id}>
                   <Box
                     sx={{
                       position: 'relative',
@@ -1305,6 +1343,11 @@ const HomePage = () => {
                 </Grid>
               ))}
             </Grid>
+            ) : (
+              <Alert severity="info" sx={{ my: 4, borderRadius: 2 }}>
+                No featured activities available yet. Admin-created featured activities will appear here.
+              </Alert>
+            )}
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>

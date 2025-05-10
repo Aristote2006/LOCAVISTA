@@ -242,12 +242,21 @@ const ActivityForm = ({ initialData, onSubmit, isLoading }) => {
       return;
     }
 
+    // Ensure featured flag is properly set (boolean)
+    const featured = data.featured === true;
+
     const formData = {
       ...data,
+      featured, // Ensure it's a boolean
       latitude: position[0],
       longitude: position[1],
       images,
+      // Add timestamp if it's a new activity
+      ...(initialData ? {} : { createdAt: new Date().toISOString() })
     };
+
+    // Log for debugging
+    console.log('Submitting activity form data:', formData);
 
     onSubmit(formData);
   };
@@ -365,21 +374,51 @@ const ActivityForm = ({ initialData, onSubmit, isLoading }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <Controller
-                  name="featured"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={field.value}
-                          onChange={(e) => field.onChange(e.target.checked)}
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 1.5,
+                    backgroundColor: theme.palette.mode === 'dark'
+                      ? alpha(theme.palette.primary.main, 0.1)
+                      : alpha(theme.palette.primary.main, 0.05),
+                    borderRadius: 2,
+                    border: `1px dashed ${alpha(theme.palette.primary.main, 0.3)}`
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Controller
+                      name="featured"
+                      control={control}
+                      render={({ field }) => (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={field.value}
+                              onChange={(e) => field.onChange(e.target.checked)}
+                              color="primary"
+                              sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
+                            />
+                          }
+                          label={
+                            <Box>
+                              <Typography variant="subtitle1" fontWeight={600} color="primary">
+                                Featured Activity
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                Featured activities will appear on the homepage in the "Featured Destinations" section
+                              </Typography>
+                            </Box>
+                          }
                         />
-                      }
-                      label="Featured Activity"
+                      )}
                     />
-                  )}
-                />
+                    <Tooltip title="Check this box to make this activity appear in the Featured Destinations section on the homepage">
+                      <IconButton size="small">
+                        <InfoIcon fontSize="small" color="primary" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </Paper>
               </Grid>
             </Grid>
           </Paper>
