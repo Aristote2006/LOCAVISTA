@@ -555,6 +555,16 @@ const ExplorePage = () => {
                         ? activity.images[0]
                         : 'https://via.placeholder.com/400x200?text=No+Image'}
                       alt={activity.name}
+                      onError={(e) => {
+                        console.log(`Image failed to load in explore page: ${e.target.src}`);
+                        // Try adding a cache-busting parameter
+                        if (!e.target.src.includes('?v=')) {
+                          e.target.src = `${e.target.src}?v=${new Date().getTime()}`;
+                        } else if (!e.target.src.includes('placeholder')) {
+                          // If that fails, use the placeholder
+                          e.target.src = 'https://via.placeholder.com/400x200?text=Image+Not+Found';
+                        }
+                      }}
                     />
                     <Box
                       sx={{

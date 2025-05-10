@@ -103,6 +103,16 @@ const ActivityCard = ({ activity, distance, onEdit, onDelete, isAdmin = false })
               ? activity.images[currentImage]
               : 'https://via.placeholder.com/400x300?text=No+Image'}
             alt={activity.name}
+            onError={(e) => {
+              console.log(`Image failed to load: ${e.target.src}`);
+              // Try adding a cache-busting parameter
+              if (!e.target.src.includes('?v=')) {
+                e.target.src = `${e.target.src}?v=${new Date().getTime()}`;
+              } else if (!e.target.src.includes('placeholder')) {
+                // If that fails, use the placeholder
+                e.target.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+              }
+            }}
             sx={{
               width: '100%',
               height: '100%',

@@ -67,9 +67,14 @@ router.delete('/:id', protect, admin, deleteActivity);
 router.post('/upload', protect, admin, upload.array('images', 3), (req, res) => {
   try {
     const imageUrls = req.files.map(file => {
-      // For local development, create URLs that point to our server
-      return `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
+      // Generate a timestamp for cache busting
+      const timestamp = new Date().getTime();
+
+      // For local development, create URLs that point to our server with cache busting
+      return `${req.protocol}://${req.get('host')}/uploads/${file.filename}?v=${timestamp}`;
     });
+
+    console.log('Server generated image URLs:', imageUrls);
     res.json({ success: true, urls: imageUrls });
   } catch (error) {
     console.error('Image upload error:', error);

@@ -197,6 +197,16 @@ const ActivityDetailsPage = () => {
                     component="img"
                     src={activity.images[currentImage]}
                     alt={activity.name}
+                    onError={(e) => {
+                      console.log(`Image failed to load in details page: ${e.target.src}`);
+                      // Try adding a cache-busting parameter
+                      if (!e.target.src.includes('?v=')) {
+                        e.target.src = `${e.target.src}?v=${new Date().getTime()}`;
+                      } else if (!e.target.src.includes('placeholder')) {
+                        // If that fails, use the placeholder
+                        e.target.src = 'https://via.placeholder.com/800x600?text=Image+Not+Found';
+                      }
+                    }}
                     sx={{
                       width: '100%',
                       height: '100%',

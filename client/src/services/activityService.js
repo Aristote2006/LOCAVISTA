@@ -76,8 +76,26 @@ export const uploadImages = async (formData) => {
         'Content-Type': 'multipart/form-data',
       },
     });
-    return { success: true, urls: data.urls };
+
+    // Ensure we have absolute URLs with cache-busting parameters
+    const processedUrls = data.urls.map(url => {
+      // Check if URL is relative (doesn't start with http or https)
+      if (!url.startsWith('http')) {
+        // Get the base URL from the current window location
+        const baseUrl = `${window.location.protocol}//${window.location.host}`;
+        url = `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+      }
+
+      // Add cache-busting parameter
+      const cacheBuster = `v=${new Date().getTime()}`;
+      const separator = url.includes('?') ? '&' : '?';
+      return `${url}${separator}${cacheBuster}`;
+    });
+
+    console.log('Processed image URLs:', processedUrls);
+    return { success: true, urls: processedUrls };
   } catch (error) {
+    console.error('Image upload error:', error);
     return {
       success: false,
       message: error.response?.data?.message || 'Failed to upload images',

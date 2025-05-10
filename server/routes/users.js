@@ -34,8 +34,13 @@ router.put(
 // Upload profile image
 router.post('/upload-profile', protect, upload.single('image'), (req, res) => {
   try {
-    // For local development, create URL that points to our server
-    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    // Generate a timestamp for cache busting
+    const timestamp = new Date().getTime();
+
+    // For local development, create URL that points to our server with cache busting
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}?v=${timestamp}`;
+
+    console.log('Server generated profile image URL:', imageUrl);
     res.json({ success: true, url: imageUrl });
   } catch (error) {
     console.error('Profile image upload error:', error);
